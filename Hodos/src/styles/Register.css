@@ -1,0 +1,74 @@
+/* Container for the register page */
+.registerPage {
+    max-width: 450px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* Title */
+.registerPage h1 {
+    text-align: center;
+    color: #333333;
+    margin-bottom: 30px;
+}
+
+/* Form styles */
+.registerForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.registerForm input {
+    width: 100%;
+    padding: 12px 15px;
+    margin-bottom: 20px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+.registerForm input:focus {
+    border-color: #0066cc;
+    outline: none;
+}
+
+/* Submit button styling */
+.registerForm button[type="submit"] {
+    background-color: #0066cc;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    padding: 12px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.registerForm button[type="submit"]:hover {
+    background-color: #005bb5;
+}
+
+/* Footer span for login link */
+.registerFooter {
+    display: block;
+    margin-top: 20px;
+    font-size: 14px;
+    color: #666666;
+    text-align: center;
+}
+
+.registerFooter a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+    margin-left: 5px;
+}
+
+.registerFooter a:hover {
+    text-decoration: underline;
+}

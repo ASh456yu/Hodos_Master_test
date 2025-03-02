@@ -1,0 +1,166 @@
+.budget-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.budget-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.budget-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.budget-select {
+    width: 180px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.budget-metrics-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(1, 1fr);
+    margin-bottom: 24px;
+}
+
+.budget-charts-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(1, 1fr);
+    margin-bottom: 24px;
+}
+
+.budget-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.budget-card-header {
+    padding-bottom: 8px;
+}
+
+.budget-card-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.budget-card-content {
+    padding-top: 8px;
+}
+
+.budget-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.budget-subtext {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin: 4px 0 0 0;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.budget-trend-up {
+    color: #22c55e;
+}
+
+.budget-trend-down {
+    color: #ef4444;
+}
+
+.budget-chart {
+    width: 100%;
+    height: 250px;
+}
+
+
+
+
+.budget-flow-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #f9f9f9;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Circular button */
+.budget-flow-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.budget-flow-button-primary {
+    background-color: #6a5acd; /* Soft purple */
+    color: white;
+    font-size: 24px;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(106, 90, 205, 0.3);
+}
+
+.budget-flow-button-primary:hover {
+    background-color: #5a4abf;
+    box-shadow: 0 6px 12px rgba(90, 74, 191, 0.4);
+}
+
+.budget-flow-icon {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+/* Stylish select dropdown */
+.budget-select {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 2px solid #6a5acd;
+    border-radius: 6px;
+    background: white;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.budget-select:hover {
+    border-color: #5a4abf;
+}
+
+.budget-select:focus {
+    border-color: #5a4abf;
+    box-shadow: 0 0 6px rgba(90, 74, 191, 0.5);
+}
+
+
+
+@media (min-width: 768px) {
+    .budget-metrics-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .budget-charts-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

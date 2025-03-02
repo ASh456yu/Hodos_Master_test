@@ -1,0 +1,426 @@
+.workflow-container {
+  width: 100%;
+  height: 100vh;
+  background-color: #f5f7fa;
+  padding: 20px;
+}
+
+.workflow-content {
+  display: flex;
+  gap: 20px;
+  height: calc(100vh - 40px);
+}
+
+/* Left Column - ReactFlow Canvas */
+.workflow-canvas {
+  flex: 1;
+  min-width: 0;
+}
+
+.canvas-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Right Column - Sidebar */
+.workflow-sidebar {
+  width: 380px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: auto;
+}
+
+.sidebar-card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+/* Profile Section */
+.profile-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.profile-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.profile-item h2 {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.profile-item p {
+  font-size: 14px;
+  color: #333;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* Workflow Controls */
+.workflow-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.control-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+  margin-right: 16px;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #666;
+}
+
+.input-group input {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Button Styles */
+.button-group {
+  display: flex;
+  gap: 12px;
+}
+
+.button-primary,
+.button-danger {
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.button-primary {
+  background: #2563eb;
+  color: white;
+}
+
+.button-danger {
+  background: #dc2626;
+  color: white;
+}
+
+/* Search Section */
+.search-section {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.search-section input {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+.blocks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.block-card {
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.block-card:hover {
+  background: #f1f5f9;
+  transform: translateY(-1px);
+}
+
+.block-info {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.block-info div {
+  font-size: 14px;
+  color: #333;
+}
+
+.block-info strong {
+  color: #666;
+}
+
+
+
+
+.dropdown {
+  position: relative;
+    display: inline-block;
+    width: 220px;
+}
+
+.dropdown-trigger {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #1f2937;
+  transition: all 0.2s ease;
+  position: relative;
+  /* Create stacking context */
+}
+
+.dropdown-trigger:hover {
+  background: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+.dropdown-icon {
+  width: 16px;
+  height: 16px;
+  transition: transform 0.2s ease;
+}
+
+
+
+.dropdown-item {
+  padding: 8px 16px;
+  cursor: pointer;
+  color: #1f2937;
+  font-size: 14px;
+  transition: background 0.2s ease;
+  display: block;
+  /* Ensure block display */
+  width: 100%;
+  text-align: left;
+  background: #ffffff;
+}
+
+.dropdown-item:hover {
+  background: #f8fafc;
+}
+
+.dropdown-item-empty {
+  padding: 8px 16px;
+  color: #6b7280;
+  font-size: 14px;
+  font-style: italic;
+}
+
+
+
+
+/* Modal Overlay */
+.workflow-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.workflow-modal {
+  background: white;
+  width: 80%;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Close Button */
+.workflow-close-btn {
+  background: red;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  float: right;
+}
+
+/* Done Button */
+.workflow-done-btn {
+  background: rgb(20, 199, 235);
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  float: right;
+  margin-right: 2px;
+}
+
+/* Tabs */
+.workflow-tabs {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.workflow-tab {
+  flex: 1;
+  padding: 10px;
+  cursor: pointer;
+  background: #ddd;
+  border: none;
+  text-align: center;
+  font-weight: bold;
+}
+
+.workflow-tab.active {
+  background: #007bff;
+  color: white;
+}
+
+/* Tab Content */
+.workflow-tab-content {
+  min-height: 100px;
+}
+
+
+/* Blocks Container */
+.workflow-blocks-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Block Card */
+.workflow-block-card {
+  background: #f9f9f9;
+  padding: 12px;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.workflow-block-card:hover {
+  transform: scale(1.02);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* Block Info */
+.workflow-block-info {
+  font-size: 14px;
+  color: #333;
+}
+
+/* Action Container */
+.workflow-action-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  height: 500px;
+}
+
+/* Action Card */
+.workflow-action-card {
+  background: linear-gradient(135deg, #007bff, #00c6ff);
+  color: white;
+  padding: 15px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  width: 200px;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.workflow-action-card:hover {
+  background: linear-gradient(135deg, #0056b3, #0096d6);
+  transform: translateY(-3px);
+}
+
+
+/* Add this CSS to your component's stylesheet */
+.workflow-card {
+  background: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  width: 300px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.workflow-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.workflow-section-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.workflow-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 15px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.workflow-button-primary {
+  background: #4a90e2;
+  color: white;
+}
+
+.workflow-button-primary:hover {
+  background: #357ab8;
+}
+
+.workflow-icon {
+  width: 16px;
+  height: 16px;
+}

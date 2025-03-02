@@ -1,0 +1,130 @@
+.report-container {
+    width: 100%;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.report-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin: 0;
+}
+
+.report-select {
+    width: 180px;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.report-metrics-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    margin-bottom: 24px;
+}
+
+.report-charts-grid {
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    margin-bottom: 24px;
+}
+
+.report-card {
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+}
+
+.report-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 8px;
+}
+
+.report-card-title {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin: 0;
+}
+
+.report-card-content {
+    padding-top: 8px;
+}
+
+.report-value {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.report-subtitle {
+    font-size: 0.75rem;
+    color: #6b7280;
+    display: flex;
+    align-items: center;
+    margin: 0;
+}
+
+.report-icon {
+    width: 16px;
+    height: 16px;
+    color: #10b981;
+    margin-right: 4px;
+}
+
+.report-chart {
+    width: 100%;
+    height: 250px;
+}
+
+.report-table-card {
+    margin-top: 24px;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th,
+.report-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table th {
+    font-weight: 500;
+    color: #4b5563;
+}
+
+.report-table tr:last-child td {
+    border-bottom: none;
+}
+
+@media (max-width: 768px) {
+    .report-charts-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-metrics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-table {
+        overflow-x: auto;
+        display: block;
+    }
+}
