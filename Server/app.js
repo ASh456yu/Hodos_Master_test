@@ -15,7 +15,7 @@ const ChatModel = require('./Models/Chats');
 const { mongoConnect } = require('./Models/db');
 const cookieParser = require('cookie-parser');
 const mongoose = require("mongoose");
-
+// const {workflowService} = require('./services/workflowService');
 
 (async () => {
     await mongoConnect();
@@ -28,7 +28,7 @@ const mongoose = require("mongoose");
             credentials: true,
         })
     );
-
+    // await workflowService.connect();
     app.use(bodyParser.raw({ type: 'application/octet-stream', limit: '50mb' }));
     app.use(cookieParser());
     app.use(express.json());

@@ -60,7 +60,7 @@ const Sidebar: React.FC = () => {
 
       <div className="sidebar-content">
         <h1 className={`sidebar-title ${isCollapsed ? 'sidebar-scaled' : ''}`}>
-          Menus
+          ADMIN PANEL
         </h1>
 
         <nav className="sidebar-nav">

@@ -142,9 +142,27 @@ const logout = async (req, res) => {
     }
 };
 
+const userInfo = async (req, res) => {
+    try {
+        const userId = req.user._id
+        const user = await UserModel.findById(userId);
+        
+        res.status(200).json({
+            success: true,
+            user: user,
+        });
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        res.status(500).json({
+            success: false,
+            message: 'Error fetching trips',
+        });
+    }
+}
 module.exports = {
     signup,
     login,
     upload_employees,
     logout,
+    userInfo
 }

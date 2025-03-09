@@ -1,7 +1,9 @@
 const WorkflowModel = require('../Models/Workflows');
-const WorkflowService = require('../services/workflowService');
 const UserModel = require("../Models/User");
-const { putObject } = require('./AWSController')
+const { putObject } = require('./AWSController');
+const { workflowService } = require('../services/workflowService')
+const { awsSendMessage } = require('./AWSController')
+
 
 const saveWorkflow = async (req, res) => {
     try {
@@ -199,7 +201,7 @@ const startWorkflow = async (req, res) => {
 const handleApproval = async (req, res) => {
     try {
         const { invoiceId, approved } = req.body;
-        const userId = req.user.id;
+        const userId = req.user._id;
 
         const result = await WorkflowService.handleApproval(invoiceId, userId, approved);
         res.json(result);
@@ -210,10 +212,10 @@ const handleApproval = async (req, res) => {
 
 const uploadPolicy = async (req, res) => {
     try {
-        
+
         const { contentType } = req.body;
         const fileName = `${req.user.company}-policy-${Date.now()}.pdf`
-        
+
         const url = await putObject(fileName, contentType)
 
         res.status(200).json({ url: url, fileName: fileName });
@@ -223,12 +225,33 @@ const uploadPolicy = async (req, res) => {
 }
 
 const createMarkdown = async (req, res) => {
+    
     try {
-        
+        const { fileName } = req.body;
+        const userID = req.user._id;
+
+        if (!fileName) {
+            return res.status(400).json({ error: "fileName is required" });
+        }
+
+        const params = {
+            MessageBody: JSON.stringify({
+                fileName: fileName,
+                userID: userID,
+                purpose: 'Policy_To_MD'
+            }),
+            MessageGroupId: userID,
+            QueueUrl: process.env.SQS_UNPROCESSED_QUERY_URL
+        }
+        await awsSendMessage(params);
+        res.status(200).json({ message: "Markdown conversion request sent successfully" });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
 }
+
+
+
 module.exports = {
     saveWorkflow,
     fetchWorkflow,
@@ -236,5 +259,6 @@ module.exports = {
     deleteWorkflow,
     startWorkflow,
     handleApproval,
-    uploadPolicy
+    uploadPolicy,
+    createMarkdown
 };

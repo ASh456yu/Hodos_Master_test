@@ -1,12 +1,59 @@
 import { Scan } from 'lucide-react';
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { handleError, handleSuccess } from '../components/utils';
 import axios from 'axios';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
+import { ToastContainer } from 'react-toastify';
+
+interface User {
+    name: string;
+    email: string;
+    department: string;
+    company: string;
+    position: string;
+    image: string;
+}
 
 const Profile: React.FC = () => {
-    const { user } = useSelector((state: RootState) => state.auth);
+    const [userDetail, setUserDetail] = useState<User | null>(null);
+
+    const fetchUserInfo = async () => {
+        try {
+            const response = await fetch(`${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/auth/userinfo`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error(`Error: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            setUserDetail(data.user);
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+        }
+    };
+
+    useEffect(() => {
+        fetchUserInfo();
+    }, []);
+
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        if (event.target.files && event.target.files[0]) {
+            const file = event.target.files[0];
+            const reader = new FileReader();
+
+            reader.onloadend = () => {
+                setUserDetail((prev) => prev ? { ...prev, image: reader.result as string } : null);
+            };
+
+            reader.readAsDataURL(file);
+        }
+    };
+
     const fileInputRef = useRef<HTMLInputElement>(null);
     const handleUploadPic = () => {
         if (fileInputRef.current) {
@@ -30,6 +77,7 @@ const Profile: React.FC = () => {
         }
 
         try {
+
             const response = await fetch(
                 `${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/general/upload-policy`,
                 {
@@ -59,34 +107,54 @@ const Profile: React.FC = () => {
 
             if (uploadResponse.status === 200) {
                 handleSuccess("File uploaded successfully");
+                console.log(`${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/general/process-uploaded-file}`);
+
+                const notifyResponse = await fetch(
+                    `${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/general/process-uploaded-file`,
+                    {
+                        method: 'POST',
+                        credentials: 'include',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            fileName,
+                        }),
+                    }
+                );
+                if (notifyResponse.ok) {
+                    handleSuccess("File uploaded successfully and queued for processing");
+                } else {
+                    handleError("File uploaded but processing request failed");
+                }
             } else {
                 throw new Error("File upload failed");
             }
-            const userId = user._id
-            const response2 = await fetch("http://127.0.0.1:8000/extract", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                credentials: 'include',
-                body: JSON.stringify({ fileName, userId }),
-            });
 
-            const data = await response.json();
-
-            if (response2.ok) {
-                handleSuccess(`Success! Markdown file created at: ${data.markdown_file}`);
-            } else {
-                handleError(`Error: ${data.detail}`);
-            }
         } catch (error) {
             handleError("Some error occurred during upload");
         }
     }
 
     return (
-        <div>
+        <>
 
+            {userDetail ? (
+                <div>
+                    <input type="file" id="imageUpload" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
+                    <img
+                        src={userDetail.image == null ? "/profile.jpg" : userDetail.image}
+                        alt="Profile"
+                        onClick={() => document.getElementById('imageUpload')?.click()}
+                    />
+                    <h2>{userDetail.name}</h2>
+                    <p>{userDetail.position} at {userDetail.company}</p>
+                    <p>Department: {userDetail.department}</p>
+                    <p>Email: {userDetail.email}</p>
+                </div>
+            ) : (
+                <p>Loading user data...</p>
+            )}
             <div onClick={handleUploadPic}>
                 <input
                     type="file"
@@ -98,9 +166,11 @@ const Profile: React.FC = () => {
                 <Scan size={20} />
                 <span>Upload Policy</span>
             </div>
-
-        </div>
+            <ToastContainer />
+        </>
     )
 }
 
 export default Profile
+
+
