@@ -6,6 +6,7 @@ import Papa from "papaparse";
 import { ToastContainer } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../store/store";
+import UnauthorizedBudgetView from "../unauthorized/UnauthorizedBudgetView";
 
 interface TripDetail {
     id: string,
@@ -301,11 +302,8 @@ const BudgetMonitoringPage = () => {
                 </div>
                 <ToastContainer />
             </>:
-            <>
-            <div>
-                You are not authorized. Please Contact our support team.
-            </div>
-            </>
+            <UnauthorizedBudgetView>
+            </UnauthorizedBudgetView>
             }
         </div>
     );
