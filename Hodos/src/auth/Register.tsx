@@ -22,7 +22,7 @@ const Register: React.FC = () => {
     const demoWorkflowCreate = (user_id: string, label: string) => {
         const nodeIDs: string[] = [];
         const edgeIDs: string[] = [];
-        for (let index = 0; index < 4; index++) {
+        for (let index = 0; index < 3; index++) {
             nodeIDs.push(`node-${user_id}-${index}-${Math.floor(Math.random() * 1000)}`);
             edgeIDs.push(`edge-${user_id}-${index}-${Math.floor(Math.random() * 1000)}`);
         }
@@ -31,7 +31,7 @@ const Register: React.FC = () => {
             id,
             type: "editableNode",
             position: { x: 200 + index * 50, y: 200 + index * 30 },
-            data: { userId: user_id, label, action: index },
+            data: { userId: user_id, label, action: index==2? 3: index },
         }));
 
         const newEdges = [
@@ -50,15 +50,6 @@ const Register: React.FC = () => {
                 source: nodeIDs[1],
                 sourceHandle: "output-2",
                 target: nodeIDs[2],
-                targetHandle: "input-1",
-                type: "customEdge",
-            },
-            {
-                data: { condition: "Default Condition" },
-                id: edgeIDs[2],
-                source: nodeIDs[2],
-                sourceHandle: "output-2",
-                target: nodeIDs[3],
                 targetHandle: "input-1",
                 type: "customEdge",
             },
