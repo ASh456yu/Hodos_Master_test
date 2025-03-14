@@ -31,7 +31,7 @@ const Register: React.FC = () => {
             id,
             type: "editableNode",
             position: { x: 200 + index * 50, y: 200 + index * 30 },
-            data: { userId: user_id, label, action: index==2? 3: index },
+            data: { userId: user_id, label, action: index == 2 ? 3 : index },
         }));
 
         const newEdges = [

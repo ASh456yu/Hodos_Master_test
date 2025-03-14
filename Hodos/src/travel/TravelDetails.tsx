@@ -63,7 +63,6 @@ const TravelDetails: React.FC = () => {
             
             if (result.success) {
                 setTrips(result.trips);
-                console.log(result.trips);
                 
                 const approvedCost = result.trips
                     .filter((trip: Travel) => trip.status === "Approved")
