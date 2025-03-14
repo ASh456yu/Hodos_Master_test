@@ -134,9 +134,9 @@ const ClaimsApprovalPage: React.FC = () => {
         <h1 className="claim-title">Claims Approval</h1>
         <p className="claim-subtitle">Review and process expense claims</p>
       </div>
-      
+
       {error && <div className="claim-error">{error}</div>}
-      
+
       {loading ? (
         <div className="claim-loading">Loading claims data...</div>
       ) : pendingInvoices.length === 0 ? (
@@ -191,29 +191,39 @@ const ClaimsApprovalPage: React.FC = () => {
                     </div>
                   </td>
                   <td className="claim-action-cell">
-                    {claim.trip_id.workflow.currentApprover && claim.trip_id.workflow.currentApprover === user._id ? (
-                      <div className="claim-actions">
-                        <button
-                          className="claim-button claim-approve-button"
-                          onClick={() => handleApproval(claim._id, true)}
-                        >
-                          <CheckCircle size={16} />
-                          <span>Approve</span>
-                        </button>
-                        <button
-                          className="claim-button claim-reject-button"
-                          onClick={() => handleApproval(claim._id, false)}
-                        >
-                          <XCircle size={16} />
-                          <span>Reject</span>
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="claim-status-approved">
-                        <CheckCircle size={16} className="claim-icon" />
-                        <span>Approved</span>
-                      </div>
-                    )}
+                    {claim.trip_id.workflow.currentApprover && claim.trip_id.workflow.currentApprover === user._id ?
+                      claim.trip_id.status === "rejected" ? (
+                        <div className="claim-status-rejected">
+                          <XCircle size={16} className="claim-icon" />
+                          <span>Rejected</span>
+                        </div>
+                      ) :
+                        (
+                          <div className="claim-actions">
+                            <button
+                              className="claim-button claim-approve-button"
+                              onClick={() => handleApproval(claim._id, true)}
+                            >
+                              <CheckCircle size={16} />
+                              <span>Approve</span>
+                            </button>
+                            <button
+                              className="claim-button claim-reject-button"
+                              onClick={() => handleApproval(claim._id, false)}
+                            >
+                              <XCircle size={16} />
+                              <span>Reject</span>
+                            </button>
+                          </div>
+                        ) : (
+                        <div className="claim-status-approved">
+                          <CheckCircle size={16} className="claim-icon" />
+                          <span>Approved</span>
+                        </div>
+                      )
+
+
+                    }
                   </td>
                 </tr>
               ))}
