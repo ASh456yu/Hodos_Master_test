@@ -18,7 +18,7 @@ const saveWorkflow = async (req, res) => {
             initiateTrip,
             tripApproval,
             claimApproval,
-            finalClaimApproval
+            finalClaimApproval,
         } = req.body;
 
         const userId = req.user._id;
@@ -121,6 +121,131 @@ const saveWorkflow = async (req, res) => {
         res.status(500).json({ message: "Internal server error", success: false });
     }
 };
+
+const saveDemoWorkflow = async (req, res) => {
+    try {
+
+        const {
+            name,
+            nodes,
+            edges,
+            initiateTrip,
+            tripApproval,
+            claimApproval,
+            finalClaimApproval,
+            user_id
+        } = req.body;
+
+        const userId = user_id;
+
+
+        if (!name || !nodes || !edges) {
+            return res.status(400).json({ message: "All fields are required", success: false });
+        }
+
+        const formattedNodes = nodes.map(node => ({
+            id: node.id,
+            type: node.type,
+            position: node.position,
+            data: {
+                userId: node.data.userId || null,
+                label: node.data.label || null,
+                action: node.data.action
+            }
+        }));
+
+        const formattedEdges = edges.map(edge => ({
+            id: edge.id,
+            source: edge.source,
+            target: edge.target,
+            sourceHandle: edge.sourceHandle || 'output-1',
+            targetHandle: edge.targetHandle || 'input-1',
+            type: edge.type || 'customEdge',
+            data: edge.data
+        }));
+
+        const newWorkflow = new WorkflowModel({
+            name,
+            user: userId,
+            nodes: formattedNodes,
+            edges: formattedEdges,
+        });
+
+        const savedWorkflow = await newWorkflow.save();
+
+        try {
+            // Update users in initiateTrip array with action 0
+            // Update users in initiateTrip array with action 0
+            if (initiateTrip && initiateTrip.length > 0) {
+                await UserModel.updateMany(
+                    { _id: { $in: initiateTrip } },
+                    {
+                        $set: {
+                            'workflow.workflow_id': savedWorkflow._id,
+                        },
+                        $addToSet: { // Use $addToSet to add to the array without duplicates
+                            'workflow.action': 0
+                        }
+                    }
+                );
+            }
+
+            // Similarly for other updates:
+            if (tripApproval && tripApproval.length > 0) {
+                await UserModel.updateMany(
+                    { _id: { $in: tripApproval } },
+                    {
+                        $set: {
+                            'workflow.workflow_id': savedWorkflow._id,
+                        },
+                        $addToSet: {
+                            'workflow.action': 1
+                        }
+                    }
+                );
+            }
+
+            // Update users in claimApproval array with action 2
+            if (claimApproval && claimApproval.length > 0) {
+                await UserModel.updateMany(
+                    { _id: { $in: claimApproval } },
+                    {
+                        $set: {
+                            'workflow.workflow_id': savedWorkflow._id,
+                        },
+                        $addToSet: {
+                            'workflow.action': 2
+                        }
+                    }
+                );
+            }
+
+            // Update finalClaimApproval user with action 3
+            if (finalClaimApproval) {
+                await UserModel.findByIdAndUpdate(
+                    finalClaimApproval,
+                    {
+                        $set: {
+                            'workflow.workflow_id': savedWorkflow._id,
+                        },
+                        $addToSet: {
+                            'workflow.action': 3
+                        }
+                    }
+                );
+            }
+        } catch (updateError) {
+            // If user updates fail, delete the saved workflow and throw error
+            await WorkflowModel.findByIdAndDelete(savedWorkflow._id);
+            throw new Error('Failed to update users with workflow information');
+        }
+
+        return res.status(201).json({ message: "Workflow saved successfully", success: true });
+    } catch (err) {
+        console.error("Error saving workflow:", err);
+        res.status(500).json({ message: "Internal server error", success: false });
+    }
+}
 
 const fetchWorkflow = async (req, res) => {
     try {
@@ -225,7 +350,7 @@ const uploadPolicy = async (req, res) => {
 }
 
 const createMarkdown = async (req, res) => {
-    
+
     try {
         const { fileName } = req.body;
         const userID = req.user._id;
@@ -260,5 +385,6 @@ module.exports = {
     startWorkflow,
     handleApproval,
     uploadPolicy,
-    createMarkdown
+    createMarkdown,
+    saveDemoWorkflow
 };

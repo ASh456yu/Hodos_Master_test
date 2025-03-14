@@ -6,7 +6,7 @@ const signup = async (req, res) => {
     try {
         const { name, email, password, company, employee_id, position, department } = req.body;
         const user = await UserModel.findOne({ email });
-        
+
         if (user) {
             return res.status(409)
                 .json({ message: 'User is already exist, you can login', success: false });
@@ -15,10 +15,11 @@ const signup = async (req, res) => {
             trip_approval: 1,
             claim_approval: 1,
             workflow_approval: 1,
-        }
+        };
+
         const workflow = {
             workflow_id: null,
-            action: null
+            action: []
         };
 
         const userModel = new UserModel({ name, email, password, company, employee_id, position, department, approvals, workflow });
@@ -28,8 +29,11 @@ const signup = async (req, res) => {
         res.status(201)
             .json({
                 message: "Signup successfully",
-                success: true
+                success: true,
+                user_id: userModel._id,
+                name: userModel.name,
             })
+            
     } catch (err) {
         res.status(500)
             .json({
@@ -37,7 +41,7 @@ const signup = async (req, res) => {
                 success: false
             })
     }
-}
+};
 
 const login = async (req, res) => {
     try {
@@ -56,7 +60,7 @@ const login = async (req, res) => {
         }
 
         const jwtToken = jwt.sign(
-            { email: user.email, _id: user._id, name: user.name, company: user.company, position: user.position, approvals: user.approvals },
+            { _id: user._id, isAuthorized: user.isAuthorized },
             process.env.JWT_SECRET,
             { expiresIn: '3h' }
         );
@@ -86,7 +90,7 @@ const upload_employees = async (req, res) => {
     try {
         const { users } = req.body;
         const company = req.user.company
-        
+
         if (!users || !Array.isArray(users)) {
             return res.status(400).json({ success: false, error: "Invalid data format" });
         }
@@ -101,8 +105,8 @@ const upload_employees = async (req, res) => {
                 department: user.Department,
                 password: await bcrypt.hash(user.password, 10),
                 approvals: {
-                    trip_approval: Number(user.trip_approval), 
-                    claim_approval: Number(user.claim_approval), 
+                    trip_approval: Number(user.trip_approval),
+                    claim_approval: Number(user.claim_approval),
                     workflow_approval: Number(user.workflow_approval)
                 },
                 workflow: {
@@ -146,7 +150,7 @@ const userInfo = async (req, res) => {
     try {
         const userId = req.user._id
         const user = await UserModel.findById(userId);
-        
+
         res.status(200).json({
             success: true,
             user: user,
@@ -158,11 +162,12 @@ const userInfo = async (req, res) => {
             message: 'Error fetching trips',
         });
     }
-}
+};
+
 module.exports = {
     signup,
     login,
     upload_employees,
     logout,
-    userInfo
+    userInfo,
 }

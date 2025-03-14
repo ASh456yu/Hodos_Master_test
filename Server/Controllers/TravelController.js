@@ -1,21 +1,17 @@
 const TripModel = require('../Models2/Trips')
 const mongoose = require("mongoose");
 const WorkflowModel = require('../Models/Workflows');
+const UserModel = require('../Models/User');
 
 
 
 const fetchTravel = async (req, res) => {
     try {
-        const company = req.user.company;
         const userId = new mongoose.Types.ObjectId(req.user._id);
-        
-        if (!company) {
-            return res.status(403).json({ success: false, error: "Unauthorized access" });
-        }
-
+        const user = await UserModel.findById(userId);
 
         const trips = await TripModel.find({
-            company: company,
+            company: user.company,
             $or: [
                 { "workflow.currentApprover": userId },
                 { "workflow.approvalHistory.approverId": userId }

@@ -6,6 +6,8 @@ import { Search, Send } from 'lucide-react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
 import CryptoJS from "crypto-js";
+import UnauthorizedChatView from '../unauthorized/UnauthorizedChatView';
+
 
 interface Message {
     sender_id: string,
@@ -84,7 +86,7 @@ const ChatPage: React.FC<EmployeePageProps> = ({ socket1, socket2 }) => {
 
     // Using useCallback for loadChats handler
     const handleLoadChats = useCallback((data: MessageArray) => {
-        
+
         const decryptedChats = data.chats.map((chat) => {
             const bytes = CryptoJS.AES.decrypt(chat.message, import.meta.env.VITE_SECRET_KEY);
             const decryptedMessage = bytes.toString(CryptoJS.enc.Utf8);
@@ -100,12 +102,12 @@ const ChatPage: React.FC<EmployeePageProps> = ({ socket1, socket2 }) => {
         socket1.off("newMessageResponse");
         socket2.off("newMessageResponse");
         socket1.off("loadChats");
-        
+
         // Setup event listeners
         socket1.on("newMessageResponse", handleNewMessage);
         socket2.on("newMessageResponse", handleNewMessage);
         socket1.on("loadChats", handleLoadChats);
-        
+
         // Cleanup event listeners on unmount
         return () => {
             socket1.off("newMessageResponse");
@@ -114,9 +116,9 @@ const ChatPage: React.FC<EmployeePageProps> = ({ socket1, socket2 }) => {
         };
     }, [socket1, socket2, handleNewMessage, handleLoadChats]);
 
-    const exitChat = (emp: Employee) => {        
+    const exitChat = (emp: Employee) => {
         setSelectedEmployee(emp);
-        socket1.emit('exitsChat', {client: 1, sender_id: user._id, receiver_id: emp?._id});
+        socket1.emit('exitsChat', { client: 1, sender_id: user._id, receiver_id: emp?._id });
     }
 
 
@@ -173,77 +175,84 @@ const ChatPage: React.FC<EmployeePageProps> = ({ socket1, socket2 }) => {
     }
 
     return (
+        <>
+            {user && user.isAuthorized ? <>
+                <div className="chat-container">
+                    <div className="chat-sidebar">
+                        <div className="chat-search">
+                            <Search className="chat-search-icon" />
+                            <input placeholder="Search employees..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                        </div>
+                        <div className="chat-employee-list">
+                            {employees.filter(emp => emp.name.toLowerCase().includes(searchTerm.toLowerCase())).map(emp => (
+                                <div key={emp.employee_id} className={`chat-employee ${selectedEmployee?.employee_id === emp.employee_id ? "chat-active" : ""}`} onClick={() => exitChat(emp)}>
+                                    {/* <img src={emp.avatar} alt={emp.name} className="chat-avatar" /> */}
+                                    <img src="#" alt={emp.name} className="chat-avatar" />
+                                    <div className="chat-employee-info">
+                                        <span className="chat-employee-name">{emp.name}</span>
+                                        {/* <span className="chat-employee-message">{emp.lastMessage}</span> */}
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className="chat-main">
+                        {selectedEmployee ? (
+                            <>
+                                <div className="chat-header">
+                                    {/* <img src={selectedEmployee.avatar} alt={selectedEmployee.name} className="chat-avatar" /> */}
+                                    <img src="#" alt={selectedEmployee.name} className="chat-avatar" />
+                                    <div>
+                                        <h2>{selectedEmployee.name}</h2>
+                                        <p>{selectedEmployee.position}</p>
+                                    </div>
+                                </div>
+                                <div className="chat-messages">
+                                    {messages1.map((message, index) =>
+                                        message.sender_id === user._id && message.receiver_id === selectedEmployee._id ? (
+                                            <div key={index} className={`chat-message chat-message-admin`}>
+                                                <div>{message.message}</div>
+                                                {/* <span>{msg.timestamp.toLocaleTimeString()}</span> */}
+                                            </div>
+                                        ) : message.receiver_id === user._id ? (
+                                            <div key={index} className={`chat-message chat-message-employee`}>
+                                                <div>{message.message}</div>
+                                                {/* <span>{msg.timestamp.toLocaleTimeString()}</span> */}
+                                            </div>
+                                        ) : (
+                                            <p key={index}></p>
+                                        )
+                                    )}
+                                    {messages.map((message, index) =>
+                                        message.sender_id === user._id && message.receiver_id === selectedEmployee._id ? (
+                                            <div key={index} className={`chat-message chat-message-admin`}>
+                                                <div>{message.message}</div>
+                                            </div>
+                                        ) : message.sender_id === selectedEmployee._id && message.receiver_id === user._id ? (
+                                            <div key={index} className={`chat-message chat-message-employee`}>
+                                                <div>{message.message}</div>
+                                            </div>
+                                        ) : (
+                                            <p key={index}></p>
+                                        )
+                                    )}
+                                </div>
+                                <div className="chat-input">
+                                    <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message..." onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} />
+                                    <button onClick={handleSendMessage}><Send /></button>
+                                </div>
+                            </>
+                        ) : (
+                            <div className="chat-placeholder">Select an employee to start chatting</div>
+                        )}
+                    </div>
 
-        <div className="chat-container">
-            <div className="chat-sidebar">
-                <div className="chat-search">
-                    <Search className="chat-search-icon" />
-                    <input placeholder="Search employees..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
                 </div>
-                <div className="chat-employee-list">
-                    {employees.filter(emp => emp.name.toLowerCase().includes(searchTerm.toLowerCase())).map(emp => (
-                        <div key={emp.employee_id} className={`chat-employee ${selectedEmployee?.employee_id === emp.employee_id ? "chat-active" : ""}`} onClick={() => exitChat(emp)}>
-                            {/* <img src={emp.avatar} alt={emp.name} className="chat-avatar" /> */}
-                            <img src="#" alt={emp.name} className="chat-avatar" />
-                            <div className="chat-employee-info">
-                                <span className="chat-employee-name">{emp.name}</span>
-                                {/* <span className="chat-employee-message">{emp.lastMessage}</span> */}
-                            </div>
-                        </div>
-                    ))}
-                </div>
-            </div>
-            <div className="chat-main">
-                {selectedEmployee ? (
-                    <>
-                        <div className="chat-header">
-                            {/* <img src={selectedEmployee.avatar} alt={selectedEmployee.name} className="chat-avatar" /> */}
-                            <img src="#" alt={selectedEmployee.name} className="chat-avatar" />
-                            <div>
-                                <h2>{selectedEmployee.name}</h2>
-                                <p>{selectedEmployee.position}</p>
-                            </div>
-                        </div>
-                        <div className="chat-messages">
-                            {messages1.map((message, index) =>
-                                message.sender_id === user._id && message.receiver_id === selectedEmployee._id ? (
-                                    <div key={index} className={`chat-message chat-message-admin`}>
-                                        <div>{message.message}</div>
-                                        {/* <span>{msg.timestamp.toLocaleTimeString()}</span> */}
-                                    </div>
-                                ) : message.receiver_id === user._id ? (
-                                    <div key={index} className={`chat-message chat-message-employee`}>
-                                        <div>{message.message}</div>
-                                        {/* <span>{msg.timestamp.toLocaleTimeString()}</span> */}
-                                    </div>
-                                ) : (
-                                    <p key={index}></p>
-                                )
-                            )}
-                            {messages.map((message, index) =>
-                                message.sender_id === user._id && message.receiver_id === selectedEmployee._id ? (
-                                    <div key={index} className={`chat-message chat-message-admin`}>
-                                        <div>{message.message}</div>
-                                    </div>
-                                ) : message.sender_id === selectedEmployee._id && message.receiver_id === user._id ? (
-                                    <div key={index} className={`chat-message chat-message-employee`}>
-                                        <div>{message.message}</div>
-                                    </div>
-                                ) : (
-                                    <p key={index}></p>
-                                )
-                            )}
-                        </div>
-                        <div className="chat-input">
-                            <input value={newMessage} onChange={(e) => setNewMessage(e.target.value)} placeholder="Type your message..." onKeyDown={(e) => e.key === "Enter" && handleSendMessage()} />
-                            <button onClick={handleSendMessage}><Send /></button>
-                        </div>
-                    </>
-                ) : (
-                    <div className="chat-placeholder">Select an employee to start chatting</div>
-                )}
-            </div>
-        </div>
+            </> :
+                <>
+                    <UnauthorizedChatView />
+                </>}
+        </>
     );
 };
 

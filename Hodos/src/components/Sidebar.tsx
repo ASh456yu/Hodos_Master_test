@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { 
-  PieChart,
+  User,
   LogOut,
   ChevronLeft,
   Activity, 
   MessageSquare, 
   Plane, 
   FileText,
+  LayoutDashboard,
+  PieChart
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import './Sidebar.css';
+import '../styles/Sidebar.css';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store/store';
 import { logout } from '../store/authSlice';
@@ -43,7 +45,8 @@ const Sidebar: React.FC = () => {
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
 
   const navItems: NavItem[] = [
-    { path: '/profile', icon: <PieChart className="sidebar-icon" />, label: 'Profile' },
+    { path: '/', icon: <LayoutDashboard className="sidebar-icon" />, label: 'Dashboard' },
+    { path: '/profile', icon: <User className="sidebar-icon" />, label: 'Profile' },
     { path: '/workflow', icon: <Activity className="sidebar-icon" />, label: 'Workflow' },
     { path: '/chats', icon: <MessageSquare className="sidebar-icon" />, label: 'Chat' },
     { path: '/trip-approval', icon: <Plane className="sidebar-icon" />, label: 'Trip Approval' },

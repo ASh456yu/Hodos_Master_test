@@ -1,5 +1,4 @@
 const InvoiceModel = require('../Models2/Invoice.js');
-const WorkflowService = require('../services/workflowService.js');
 const WorkflowModel = require('../Models/Workflows');
 const UserModel = require('../Models/User.js');
 const mongoose = require('mongoose');
@@ -8,13 +7,17 @@ const TripModel = require('../Models2/Trips.js');
 const getPendingInvoices = async (req, res) => {
     try {
         const userId = new mongoose.Types.ObjectId(req.user._id);
-        const company = req.user.company;
+        const user = await UserModel.findById(userId);
+        const company = user.company;
 
         const pendingInvoices = await InvoiceModel.find({
             company: company,
+            isSubmitted: true,
         }).populate('trip_id');
+
         const filtered = pendingInvoices.filter(inv =>
-            inv.trip_id.workflow.currentApprover.equals(userId)
+            inv.trip_id.workflow.currentApprover?.equals(userId) ||
+            inv.trip_id.workflow.approvalHistory?.some(history => history.approverId?.equals(userId))
         );
 
         return res.json({ 'mydata': filtered });
@@ -28,9 +31,8 @@ const getPendingInvoices = async (req, res) => {
 const handleApproval = async (req, res) => {
     try {
         const { taskId, approved } = req.body;
-        const userId = req.user._id;
 
-        const invoice = await InvoiceModel.findById(taskId)
+        const invoice = await InvoiceModel.findById(taskId);
         const trip = await TripModel.findById(invoice.trip_id).populate({
             path: 'workflow.id',
             model: WorkflowModel,
@@ -56,11 +58,13 @@ const handleApproval = async (req, res) => {
                 await TripModel.findByIdAndUpdate(tripId, {
                     status: 'completed',
                     'workflow.currentNode': null,
-                            'workflow.currentApprover': null,
+                    'workflow.currentApprover': null,
+                    'workflow.currentAction': null,
                     $push: {
                         'workflow.approvalHistory': {
                             nodeId: currentNode.id,
                             approverId: currentNode.data.userId,
+                            action: 3,
                             approved: true,
                             comments: "comments",
                             timestamp: new Date()
@@ -75,10 +79,12 @@ const handleApproval = async (req, res) => {
                             status: 'pending_claim_approval',
                             'workflow.currentNode': connectedNodes[0].id,
                             'workflow.currentApprover': connectedNodes[0].data.userId,
+                            'workflow.currentAction': connectedNodes[0].data.action,
                             $push: {
                                 'workflow.approvalHistory': {
                                     nodeId: currentNode.id,
                                     approverId: currentNode.data.userId,
+                                    action: 2,
                                     approved: true,
                                     comments: "comments",
                                     timestamp: new Date()
@@ -92,10 +98,12 @@ const handleApproval = async (req, res) => {
                             status: 'pending_final_claim_approval',
                             'workflow.currentNode': connectedNodes[0].id,
                             'workflow.currentApprover': connectedNodes[0].data.userId,
+                            'workflow.currentAction': connectedNodes[0].data.action,
                             $push: {
                                 'workflow.approvalHistory': {
                                     nodeId: currentNode.id,
                                     approverId: currentNode.data.userId,
+                                    action: 3,
                                     approved: true,
                                     comments: "comments",
                                     timestamp: new Date()
@@ -117,6 +125,7 @@ const handleApproval = async (req, res) => {
                     'workflow.approvalHistory': {
                         nodeId: currentNode.id,
                         approverId: currentNode.data.userId,
+                        action: currentNode.data.action,
                         approved: false,
                         comments: "comments",
                         timestamp: new Date()

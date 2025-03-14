@@ -10,6 +10,8 @@ import { fetchUser } from './store/authSlice';
 import { AppDispatch } from './store/store';
 import ProtectedRoute from './auth/ProtectedRoute';
 import LoadingSpinner from './components/LoadingSpinner';
+import ErrorPage from './pages/ErrorPage';
+
 
 const socket1 = socketIO(`${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}`, {
   autoConnect: false,
@@ -20,6 +22,7 @@ const socket2 = socketIO(`${import.meta.env.VITE_SERVER_LOCATION.split(',')[1]}`
 });
 
 const App: React.FC = () => {
+
   const dispatch = useDispatch<AppDispatch>();
 
   useEffect(() => {
@@ -88,9 +91,18 @@ const App: React.FC = () => {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <EmployeePage socket1={socket1} socket2={socket2} />
+              </ProtectedRoute>
+            }
+          />
 
           <Route path="/signup" element={<Register />} />
           <Route path="/login" element={<Login />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </Suspense>
     </>

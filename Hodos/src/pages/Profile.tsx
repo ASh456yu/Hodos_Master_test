@@ -1,8 +1,12 @@
-import { Scan } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react'
 import { handleError, handleSuccess } from '../components/utils';
 import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
+import { useSelector } from 'react-redux';
+import { RootState } from '../store/store';
+import { Scan, Mail, Building, Users, Upload, Camera } from 'lucide-react';
+import '../styles/Profile.css'
+
 
 interface User {
     name: string;
@@ -15,6 +19,7 @@ interface User {
 
 const Profile: React.FC = () => {
     const [userDetail, setUserDetail] = useState<User | null>(null);
+    const { user } = useSelector((state: RootState) => state.auth);
 
     const fetchUserInfo = async () => {
         try {
@@ -137,37 +142,92 @@ const Profile: React.FC = () => {
     }
 
     return (
+        <div className="profile-container">
+      {userDetail ? (
         <>
-
-            {userDetail ? (
-                <div>
-                    <input type="file" id="imageUpload" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} />
-                    <img
-                        src={userDetail.image == null ? "/profile.jpg" : userDetail.image}
-                        alt="Profile"
-                        onClick={() => document.getElementById('imageUpload')?.click()}
-                    />
-                    <h2>{userDetail.name}</h2>
-                    <p>{userDetail.position} at {userDetail.company}</p>
-                    <p>Department: {userDetail.department}</p>
-                    <p>Email: {userDetail.email}</p>
-                </div>
-            ) : (
-                <p>Loading user data...</p>
-            )}
-            <div onClick={handleUploadPic}>
-                <input
-                    type="file"
-                    accept="application/pdf"
-                    ref={fileInputRef}
-                    onChange={handleImageChange}
-                    hidden
+          <div className="profile-header">
+            <div className="profile-cover"></div>
+            <div className="profile-avatar-container">
+              <input 
+                type="file" 
+                id="imageUpload" 
+                accept="image/*" 
+                style={{ display: 'none' }} 
+                onChange={handleImageUpload} 
+              />
+              <div className="profile-avatar-wrapper">
+                <img
+                  className="profile-avatar"
+                  src={userDetail.image == null ? "/profile.jpg" : userDetail.image}
+                  alt="Profile"
+                  onClick={() => document.getElementById('imageUpload')?.click()}
                 />
-                <Scan size={20} />
-                <span>Upload Policy</span>
+                <div className="profile-avatar-edit">
+                  <Camera size={18} />
+                </div>
+              </div>
             </div>
-            <ToastContainer />
+          </div>
+          
+          <div className="profile-content">
+            <div className="profile-info-card">
+              <div className="profile-info-header">
+                <h1 className="profile-name">{userDetail.name}</h1>
+              </div>
+              
+              <div className="profile-title">
+                <Building size={16} className="profile-icon" />
+                <p>{userDetail.position} at {userDetail.company}</p>
+              </div>
+              
+              <div className="profile-details">
+                <div className="profile-detail-item">
+                  <Users size={16} className="profile-icon" />
+                  <p>Department: {userDetail.department}</p>
+                </div>
+                <div className="profile-detail-item">
+                  <Mail size={16} className="profile-icon" />
+                  <p>Email: {userDetail.email}</p>
+                </div>
+              </div>
+              
+              <div className="profile-actions">
+                {user && user.isAuthorized ? (
+                  <button 
+                    className="profile-upload-button" 
+                    onClick={handleUploadPic}
+                  >
+                    <input
+                      type="file"
+                      accept="application/pdf"
+                      ref={fileInputRef}
+                      onChange={handleImageChange}
+                      hidden
+                    />
+                    <Scan size={18} />
+                    <span>Upload Policy</span>
+                  </button>
+                ) : (
+                    <button className="profile-upload-button profile-upload-button-disabled">
+                    <Upload size={18} />
+                    <span>Policy Upload</span>
+                    <div className="profile-unauthorized-note">
+                      You are unauthorized. Please contact support team.
+                    </div>
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
         </>
+      ) : (
+        <div className="profile-loading">
+          <div className="profile-loading-spinner"></div>
+          <p>Loading user data...</p>
+        </div>
+      )}
+      <ToastContainer />
+    </div>
     )
 }
 

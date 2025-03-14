@@ -54,9 +54,13 @@ const UserSchema = new Schema({
             default: null
         },
         action: {
-            type: Number,
-            default: null
+            type: [Number],
+            default: []
         },
+    },
+    isAuthorized: {
+        type: Boolean,
+        default: false
     }
 });
 

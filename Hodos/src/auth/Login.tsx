@@ -66,36 +66,61 @@ const Login: React.FC = () => {
 
 
     return (
-        <div className='loginPage'>
-            <h1>Login</h1>
-            <form onSubmit={handleLogin}>
-                <input type="email" name="email" onChange={handleChange} value={loginInfo.email} placeholder="Enter Email" required />
-                <br /><br />
-                <input
-                    type={showPassword ? "text" : "password"}
-                    id="password"
-                    name="password"
-                    onChange={handleChange}
-                    value={loginInfo.password}
-                    placeholder="Enter your password"
-                    required
-                    className="loginInputField"
-                />
-                <button
-                    type="button"
-                    onClick={togglePasswordVisibility}
-                    className="loginToggleButton"
-                >
-                    {showPassword ? "Hide" : "Show"}
-                </button>
-                <br /><br />
-                <button type='submit'>
-                    {loading ? <span className="spinner"></span> : 'Login'}
-                </button>
-                <span>Does't have an account ?
-                    <Link to="/signup">Signup</Link>
-                </span>
-            </form>
+        <div className="login-container">
+            <div className="login-card">
+                <div className="login-header">
+                    <h1 className="login-title">Login</h1>
+                </div>
+                <form onSubmit={handleLogin} className="login-form">
+                    <div className="login-input-group">
+                        <label htmlFor="email" className="login-label">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            onChange={handleChange}
+                            value={loginInfo.email}
+                            placeholder="Enter your email"
+                            required
+                            className="login-input"
+                        />
+                    </div>
+
+                    <div className="login-input-group">
+                        <label htmlFor="password" className="login-label">Password</label>
+                        <div className="login-password-wrapper">
+                            <input
+                                type={showPassword ? "text" : "password"}
+                                id="password"
+                                name="password"
+                                onChange={handleChange}
+                                value={loginInfo.password}
+                                placeholder="Enter your password"
+                                required
+                                className="login-input login-password-input"
+                            />
+                            <button
+                                type="button"
+                                onClick={togglePasswordVisibility}
+                                className="login-toggle-password"
+                            >
+                                {showPassword ? "Hide" : "Show"}
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" className="login-button">
+                        {loading ? <span className="login-spinner"></span> : 'Login'}
+                    </button>
+
+                    <div className="login-footer">
+                        <span className="login-signup-text">
+                            Don't have an account?{' '}
+                            <Link to="/signup" className="login-link">Sign up</Link>
+                        </span>
+                    </div>
+                </form>
+            </div>
             <ToastContainer />
         </div>
     )

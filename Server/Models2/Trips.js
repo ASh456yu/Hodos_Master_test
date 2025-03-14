@@ -17,9 +17,11 @@ const TripSchema = new Schema({
         id: { type: Schema.Types.ObjectId, ref: 'workflows', default: null },
         currentNode: { type: String, default: null },
         currentApprover: { type: Schema.Types.ObjectId, ref: 'users', default: null },
+        currentAction: {type: Number, default: null},
         approvalHistory: [{
             nodeId: String,
             approverId: { type: Schema.Types.ObjectId, ref: 'users' },
+            action: Number,
             approved: Boolean,
             comments: String,
             timestamp: Date

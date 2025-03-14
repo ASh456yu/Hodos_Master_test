@@ -1,8 +1,9 @@
 const { ensureAuthenticated } = require('../Middleware/AuthValidation');
 const router = require('express').Router();
-const { saveWorkflow, fetchWorkflow, updateWorkflow, deleteWorkflow, startWorkflow, handleApproval, uploadPolicy, createMarkdown } = require('../Controllers/GeneralController');
+const { saveWorkflow, fetchWorkflow, updateWorkflow, deleteWorkflow, startWorkflow, handleApproval, uploadPolicy, createMarkdown, saveDemoWorkflow } = require('../Controllers/GeneralController');
 
 router.post('/save-workflow', ensureAuthenticated, saveWorkflow);
+router.post('/save-demo-workflow', saveDemoWorkflow);
 router.get('/fetch-workflow', ensureAuthenticated, fetchWorkflow);
 router.put('/update-workflow', ensureAuthenticated, updateWorkflow);
 router.delete('/delete-workflow/:id', ensureAuthenticated, deleteWorkflow);

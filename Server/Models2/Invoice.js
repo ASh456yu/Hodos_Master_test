@@ -8,22 +8,22 @@ const InvoiceSchema = new Schema({
         ref: 'trips',
         required: true,
     },
-    workflow: {
-        type: Schema.Types.ObjectId,
-        ref: 'workflows',
+    company: {
+        type: String,
+        required: true,
     },
     total: {
         type: Number,
         required: true
     },
-    completion: {
-        type: Number,
-        required: true
+    bills: {
+        type: [Schema.Types.ObjectId],
+        default: []
     },
-    submit_date: {
-        type: String,
-        required: true,
-    },
+    isSubmitted: {
+        type: Boolean,
+        default: false
+    }
 });
 
 const InvoiceModel = connectionB.model('invoices', InvoiceSchema);
