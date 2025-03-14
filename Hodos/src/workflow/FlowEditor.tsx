@@ -9,8 +9,6 @@ import { ToastContainer } from 'react-toastify';
 import WorkFlowModal from './WorkFlowModal';
 import WorkflowSidebar from './WorkflowSidebar';
 import WorkflowMain from './WorkflowMain';
-import { useSelector } from 'react-redux';
-import { RootState } from '../store/store';
 
 
 
@@ -31,7 +29,6 @@ const FlowReact: React.FC = () => {
     const [claimApproval, setClaimApproval] = useState<string[]>([]);
     const [finalClaimApproval, setFinalClaimApproval] = useState<string>();
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-    const { user } = useSelector((state: RootState) => state.auth);
 
     function clickedNode() {
         setIsModalOpen(true);
