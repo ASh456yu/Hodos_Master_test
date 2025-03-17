@@ -218,7 +218,7 @@ const Profile: React.FC = () => {
                 )}
                 &nbsp;
                 <button
-                  onClick={() => window.open(`${import.meta.env.VITE_CLIENT_LOCATION.split(',')[1]}`, "_blank", "noopener,noreferrer")}
+                  onClick={() => window.open(`${import.meta.env.VITE_CLIENT_LOCATION.split(',')[0]}`, "_blank", "noopener,noreferrer")}
                   className="profile-link-button"
                 >
                   Switch to Employee Page
