@@ -12,7 +12,7 @@ const Login: React.FC = () => {
     const [loginInfo, setLoginInfo] = useState({
         email: '',
         password: ''
-    })
+    });
     const dispatch = useDispatch<AppDispatch>();
     const [loading, setLoading] = useState(false);
 

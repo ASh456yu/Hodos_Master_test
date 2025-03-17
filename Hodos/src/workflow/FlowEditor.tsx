@@ -4,12 +4,12 @@ import {
     useEdgesState,
 } from '@xyflow/react';
 import '@xyflow/react/dist/style.css';
-import '../styles/Workflow.css'
+import '../styles/Workflow.css';
 import { ToastContainer } from 'react-toastify';
 import WorkFlowModal from './WorkFlowModal';
 import WorkflowSidebar from './WorkflowSidebar';
 import WorkflowMain from './WorkflowMain';
-
+import "../styles/FlowEditor.css";
 
 
 const initialEdges: any[] = [];
@@ -29,6 +29,7 @@ const FlowReact: React.FC = () => {
     const [claimApproval, setClaimApproval] = useState<string[]>([]);
     const [finalClaimApproval, setFinalClaimApproval] = useState<string>();
     const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+    const [sidebarVisible, setSidebarVisible] = useState(true);
 
     function clickedNode() {
         setIsModalOpen(true);
@@ -36,9 +37,9 @@ const FlowReact: React.FC = () => {
 
     const controlNode = (x: NodeData, id: string) => {
         setSelectedNodeId(id);
-        setNodeData(x)
-        clickedNode()
-    }
+        setNodeData(x);
+        clickedNode();
+    };
 
     const initialNodes: any[] = [
         {
@@ -55,34 +56,49 @@ const FlowReact: React.FC = () => {
     ];
     const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
 
+    const toggleSidebar = () => {
+        setSidebarVisible(!sidebarVisible);
+    };
+
     return (
-
-
         <div className="workflow-container">
-            {/* Main content area */}
             <div className="workflow-content">
-                {/* Left column - ReactFlow */}
-                <WorkflowMain
-                    nodes={nodes}
-                    edges={edges}
-                    onNodesChange={onNodesChange}
-                    onEdgesChange={onEdgesChange}
-                    setSelectedNodeId={setSelectedNodeId}
-                    setEdges={setEdges}
-                />
+                {/* Main workflow area */}
+                <div className="workflow-main">
+                    <WorkflowMain
+                        nodes={nodes}
+                        edges={edges}
+                        onNodesChange={onNodesChange}
+                        onEdgesChange={onEdgesChange}
+                        setSelectedNodeId={setSelectedNodeId}
+                        setEdges={setEdges}
+                    />
+                    <button 
+                        className="workflow-sidebar-toggle"
+                        onClick={toggleSidebar}
+                        aria-label={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
+                    >
+                        {sidebarVisible ? '→' : '←'}
+                    </button>
+                </div>
 
-                {/* Right column - Controls and Search */}
-                <WorkflowSidebar
-                    nodes={nodes}
-                    edges={edges}
-                    initiateTrip={initiateTrip}
-                    tripApproval={tripApproval}
-                    claimApproval={claimApproval}
-                    finalClaimApproval={finalClaimApproval}
-                    setNodes={setNodes}
-                    setEdges={setEdges}
-                />
+                {/* Workflow controls sidebar */}
+                {sidebarVisible && (
+                    <div className="workflow-sidebar">
+                        <WorkflowSidebar
+                            nodes={nodes}
+                            edges={edges}
+                            initiateTrip={initiateTrip}
+                            tripApproval={tripApproval}
+                            claimApproval={claimApproval}
+                            finalClaimApproval={finalClaimApproval}
+                            setNodes={setNodes}
+                            setEdges={setEdges}
+                        />
+                    </div>
+                )}
 
+                {/* Node edit modal */}
                 <WorkFlowModal
                     isModalOpen={isModalOpen}
                     setIsModalOpen={setIsModalOpen}
@@ -99,7 +115,6 @@ const FlowReact: React.FC = () => {
                 />
             </div>
             <ToastContainer />
-
         </div>
     );
 }

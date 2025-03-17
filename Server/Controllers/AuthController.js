@@ -26,12 +26,26 @@ const signup = async (req, res) => {
         userModel.password = await bcrypt.hash(password, 10);
         await userModel.save();
 
+        const jwtToken = jwt.sign(
+            { _id: userModel._id, isAuthorized: userModel.isAuthorized },
+            process.env.JWT_SECRET,
+            { expiresIn: '3h' }
+        );
+
+        res.cookie('projectA_token', jwtToken, {
+            httpOnly: true,
+            secure: true,
+            sameSite: 'None',
+            maxAge: 180 * 60 * 1000,
+        });
+
         res.status(201)
             .json({
                 message: "Signup successfully",
                 success: true,
                 user_id: userModel._id,
                 name: userModel.name,
+                email: userModel.email,
             })
             
     } catch (err) {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   User,
   LogOut,
@@ -10,7 +10,7 @@ import {
   LayoutDashboard,
   PieChart
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import '../styles/Sidebar.css';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store/store';
@@ -27,6 +27,17 @@ const Sidebar: React.FC = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 480);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 480);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleLogout = async () => {
     try {
@@ -57,9 +68,11 @@ const Sidebar: React.FC = () => {
 
   return (
     <div className={`sidebar-wrapper ${isCollapsed ? 'sidebar-collapsed' : ''}`}>
-      <button className="sidebar-toggle-button" onClick={toggleSidebar}>
-        <ChevronLeft className={`sidebar-toggle-icon ${isCollapsed ? 'sidebar-rotated' : ''}`} />
-      </button>
+      {!isMobile && (
+        <button className="sidebar-toggle-button" onClick={toggleSidebar}>
+          <ChevronLeft className={`sidebar-toggle-icon ${isCollapsed ? 'sidebar-rotated' : ''}`} />
+        </button>
+      )}
 
       <div className="sidebar-content">
         <h1 className={`sidebar-title ${isCollapsed ? 'sidebar-scaled' : ''}`}>
@@ -73,7 +86,10 @@ const Sidebar: React.FC = () => {
                 key={item.label}
                 className="sidebar-nav-item"
                 onClick={item.action ? item.action : () => navigate(item.path)}
-                style={{ cursor: 'pointer' }}
+                style={{ 
+                  cursor: 'pointer',
+                  backgroundColor: location.pathname === item.path ? '#334155' : 'transparent'
+                }}
               >
                 {item.icon}
                 <span className={`sidebar-nav-label ${isCollapsed ? 'sidebar-hidden' : ''}`}>

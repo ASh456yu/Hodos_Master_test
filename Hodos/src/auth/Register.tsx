@@ -4,9 +4,14 @@ import { ToastContainer } from "react-toastify";
 import { handleSuccess, handleError } from "../components/utils";
 import "../styles/Register.css";
 import axios from "axios";
+import { AppDispatch } from "../store/store";
+import { useDispatch } from "react-redux";
+import { fetchUser } from '../store/authSlice';
 
 
 const Register: React.FC = () => {
+    const dispatch = useDispatch<AppDispatch>();
+    const [loading, setLoading] = useState<boolean>(false);
     const [signupInfo, setSignupInfo] = useState({
         name: "",
         email: "",
@@ -65,12 +70,13 @@ const Register: React.FC = () => {
 
     const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Remove the useDispatch hook from here - use the one defined at the top level
 
         const { name, email, password, company, employee_id, position, department } = signupInfo;
         if (!name || !email || !password || !company || !employee_id || !position || !department) {
             return handleError("Please fill all fields!!");
         }
+
+        setLoading(true);
         try {
             const url = `${import.meta.env.VITE_SERVER_LOCATION.split(",")[0]}/auth/signup`;
             const response = await fetch(url, {
@@ -79,6 +85,7 @@ const Register: React.FC = () => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(signupInfo),
+                credentials: 'include',
             });
             const result = await response.json();
             const { success, message, error } = result;
@@ -104,9 +111,9 @@ const Register: React.FC = () => {
                     handleSuccess("Workflow saved successfully!");
                 }
                 handleSuccess(message);
-                setTimeout(() => {
-                    navigate("/login");
-                }, 1000);
+
+                await dispatch(fetchUser()).unwrap();
+                navigate('/workflow');
             } else if (error) {
                 const details = error?.details[0].message;
                 handleError(details);
@@ -115,6 +122,8 @@ const Register: React.FC = () => {
             }
         } catch (err) {
             handleError(err instanceof Error ? err.message : String(err));
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -129,7 +138,9 @@ const Register: React.FC = () => {
                 <input type="text" onChange={handleChange} name="position" value={signupInfo.position} placeholder="Enter Your Position" required />
                 <input type="text" onChange={handleChange} name="department" value={signupInfo.department} placeholder="Enter Your Department" required />
                 <input type="password" onChange={handleChange} name="password" value={signupInfo.password} placeholder="Enter Password" required />
-                <button type="submit">Register</button>
+                <button type="submit" disabled={loading}>
+                    {loading ? <span className="spinner"></span> : "Register"}
+                </button>
                 <span className="registerFooter">
                     Already have an account? <Link to="/login">Login</Link>
                 </span>
