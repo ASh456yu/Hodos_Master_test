@@ -80,8 +80,19 @@ const ChatPage: React.FC<EmployeePageProps> = ({ socket1, socket2 }) => {
     const handleNewMessage = useCallback((data: Message) => {
         const bytes = CryptoJS.AES.decrypt(data.message, import.meta.env.VITE_SECRET_KEY);
         const decryptedMessage = bytes.toString(CryptoJS.enc.Utf8);
-
-        setMessages(prevMessages => [...prevMessages, { ...data, message: decryptedMessage }]);
+        
+        // Check if this message is already in the messages array
+        setMessages(prevMessages => {
+            // Only add if it's not a duplicate
+            const isDuplicate = prevMessages.some(msg => 
+                msg.sender_id === data.sender_id && 
+                msg.receiver_id === data.receiver_id && 
+                msg.message === decryptedMessage
+            );
+            
+            if (isDuplicate) return prevMessages;
+            return [...prevMessages, { ...data, message: decryptedMessage }];
+        });
     }, []);
 
     // Using useCallback for loadChats handler

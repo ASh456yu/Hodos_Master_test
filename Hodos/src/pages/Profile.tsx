@@ -4,7 +4,7 @@ import axios from 'axios';
 import { ToastContainer } from 'react-toastify';
 import { useSelector } from 'react-redux';
 import { RootState } from '../store/store';
-import { Scan, Mail, Building, Users, Upload, Camera } from 'lucide-react';
+import { Scan, Mail, Building, Users, Upload, Camera, AlertCircle, CheckCircle, Clock } from 'lucide-react';
 import '../styles/Profile.css'
 
 
@@ -14,12 +14,17 @@ interface User {
   department: string;
   company: string;
   position: string;
+  policy: {
+    pdf_file: string,
+    md_file: string
+  };
   image: string;
 }
 
 const Profile: React.FC = () => {
   const [userDetail, setUserDetail] = useState<User | null>(null);
   const { user } = useSelector((state: RootState) => state.auth);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const fetchUserInfo = async () => {
     try {
@@ -32,10 +37,11 @@ const Profile: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.status} ${response.statusText}`);
+        handleError(`Error: ${response.status} ${response.statusText}`);
       }
 
       const data = await response.json();
+
       setUserDetail(data.user);
     } catch (error) {
       console.error('Failed to fetch user data:', error);
@@ -80,7 +86,7 @@ const Profile: React.FC = () => {
       handleError("Upload a policy first");
       return;
     }
-
+    setLoading(true);
     try {
 
       const response = await fetch(
@@ -98,7 +104,7 @@ const Profile: React.FC = () => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to get the upload URL");
+        handleError("Failed to get the upload URL");
       }
 
       const { url, fileName } = await response.json();
@@ -111,9 +117,6 @@ const Profile: React.FC = () => {
       });
 
       if (uploadResponse.status === 200) {
-        handleSuccess("File uploaded successfully");
-        console.log(`${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/general/process-uploaded-file}`);
-
         const notifyResponse = await fetch(
           `${import.meta.env.VITE_SERVER_LOCATION.split(',')[0]}/general/process-uploaded-file`,
           {
@@ -133,11 +136,13 @@ const Profile: React.FC = () => {
           handleError("File uploaded but processing request failed");
         }
       } else {
-        throw new Error("File upload failed");
+        handleError("File upload failed");
       }
 
     } catch (error) {
       handleError("Some error occurred during upload");
+    } finally {
+      setLoading(true);
     }
   }
 
@@ -192,10 +197,18 @@ const Profile: React.FC = () => {
               </div>
 
               <div className="profile-actions">
+                <div className="policy-status">
+                  {user.isAuthorized && userDetail.policy.pdf_file
+                    ? userDetail.policy.md_file
+                      ? <p className="policy-status-processed"><CheckCircle size={16} /> Policy Processed</p>
+                      : <p className="policy-status-processing"><Clock size={16} /> Processing Policy...</p>
+                    : <p className="policy-status-none"><AlertCircle size={16} /> No Policy Uploaded</p>}
+                </div>
                 {user && user.isAuthorized ? (
                   <button
                     className="profile-upload-button"
                     onClick={handleUploadPic}
+                    disabled={loading || (userDetail.policy.md_file == null && userDetail.policy.pdf_file != null)}
                   >
                     <input
                       type="file"

@@ -158,6 +158,36 @@
     justify-content: flex-start;
 }
 
+/* Policy Upload Status */
+.policy-status {
+    display: flex;
+    align-items: center;
+    margin-right: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #64748b;
+    padding: 10px 0;
+}
+
+.policy-status p {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.policy-status-processed {
+    color: #10b981;
+}
+
+.policy-status-processing {
+    color: #f59e0b;
+}
+
+.policy-status-none {
+    color: #94a3b8;
+}
+
 .profile-upload-button {
     position: relative;
     display: flex;
