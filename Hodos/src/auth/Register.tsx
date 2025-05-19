@@ -252,7 +252,7 @@ const Register: React.FC = () => {
                     </div>
 
                     {/* Testimonial Section */}
-                    <div className="register-testimonial animate-fade-in-up-delay">
+                    {/* <div className="register-testimonial animate-fade-in-up-delay">
                         <div className="register-testimonial-content">
                             <p>
                                 "Hodos transformed how our team handles expenses. The automated approval workflow has saved us countless hours each month."
@@ -264,7 +264,7 @@ const Register: React.FC = () => {
                                 <p>Finance Director, Elysium Tech</p>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <ToastContainer />

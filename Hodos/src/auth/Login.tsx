@@ -200,7 +200,7 @@ const Login: React.FC = () => {
                     </div>
 
                     {/* Testimonial Section */}
-                    <div className="login-testimonial animate-fade-in-up-delay">
+                    {/* <div className="login-testimonial animate-fade-in-up-delay">
                         <div className="login-testimonial-content">
                             <p>
                                 "Hodos transformed how our team handles expenses. The automated approval workflow has saved us countless hours each month."
@@ -212,7 +212,7 @@ const Login: React.FC = () => {
                                 <p>Finance Director, Elysium Tech</p>
                             </div>
                         </div>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             <ToastContainer />
