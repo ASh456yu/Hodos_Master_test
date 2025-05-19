@@ -208,6 +208,7 @@
   align-items: center;
   position: relative;
   overflow: hidden;
+  margin-right: 10px;
 }
 
 .login-primary-btn::before {
